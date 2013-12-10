@@ -4,11 +4,15 @@
     <title>Fun</title>
     <script type="text/javascript" src="glMatrix-0.9.5.min.js"></script>
     <script type="text/javascript" src="webgl-utils.js"></script>
+    <script src="jquery.js"></script>
+    <script src="mediaelement-and-player.min.js"></script>
     <style type="text/css">
     video {
         display: none;
     }
     </style>
+    
+    
     
     <script id="shader-fs" type="x-shader/x-fragment">
         precision mediump float;
@@ -214,7 +218,7 @@
             ];
             glContext.bufferData(glContext.ARRAY_BUFFER, new Float32Array(textureCoordinates), glContext.STATIC_DRAW);
             cubeVertexTextureCoordinatesBuffer.itemSize = 2;
-            cubeVertexTextureCoordinatesBuffer.numItems = 24;
+            cubeVertexTextureCoordinatesBuffer.numItems = 4;
             
             cubeVertexIndexBuffer = glContext.createBuffer();
             glContext.bindBuffer(glContext.ELEMENT_ARRAY_BUFFER, cubeVertexIndexBuffer);
@@ -259,9 +263,9 @@
             return degrees * Math.PI / 180;
         }
         
-        var xRotation = 0;
+        var xRotation = 20;
         var xSpeed = 0;
-        var yRotation = 0;
+        var yRotation = 20;
         var ySpeed = 0;
         
         var z = -5.0;
@@ -342,7 +346,16 @@
             
             glContext.bindBuffer(glContext.ELEMENT_ARRAY_BUFFER, cubeVertexIndexBuffer);
             setMatrixUniforms();
-            glContext.drawElements(glContext.TRIANGLES, cubeVertexIndexBuffer.numItems, glContext.UNSIGNED_SHORT, 0);
+            //glContext.drawElements(glContext.TRIANGLES, cubeVertexIndexBuffer.numItems, glContext.UNSIGNED_SHORT, 0);
+            glContext.drawElements(glContext.TRIANGLES, 6, glContext.UNSIGNED_SHORT, 0);
+            
+            glContext.bindTexture(glContext.TEXTURE_2D, crateTextures[filter]);
+            //glContext.uniform1i(shaderProgram.samplerUniform, 0);
+            
+            //glContext.bindBuffer(glContext.ELEMENT_ARRAY_BUFFER, cubeVertexIndexBuffer);
+            //setMatrixUniforms();
+            //glContext.drawElements(glContext.TRIANGLES, cubeVertexIndexBuffer.numItems, glContext.UNSIGNED_SHORT, 0);
+            glContext.drawElements(glContext.TRIANGLES, cubeVertexIndexBuffer.numItems - 6, glContext.UNSIGNED_SHORT, 12);
         }
         
         var videoElement;
@@ -410,6 +423,12 @@
             glContext.texParameteri(glContext.TEXTURE_2D, glContext.TEXTURE_WRAP_S, glContext.CLAMP_TO_EDGE);
             glContext.texParameteri(glContext.TEXTURE_2D, glContext.TEXTURE_WRAP_T, glContext.CLAMP_TO_EDGE);
             
+            glContext.bindTexture(glContext.TEXTURE_2D, textures[0]);
+            glContext.texImage2D(glContext.TEXTURE_2D, 0, glContext.RGBA, glContext.RGBA, glContext.UNSIGNED_BYTE, textures[0].image);
+            glContext.texParameteri(glContext.TEXTURE_2D, glContext.TEXTURE_MAG_FILTER, glContext.LINEAR);
+            glContext.texParameteri(glContext.TEXTURE_2D, glContext.TEXTURE_MIN_FILTER, glContext.LINEAR_MIPMAP_NEAREST);
+            glContext.generateMipmap(glContext.TEXTURE_2D);
+            
         }
         
         var crateTextures = new Array();
@@ -428,7 +447,8 @@
             }
             
             //crateImage.src = "crate.gif";
-            crateImage.src = "rock.jpg"
+            crateImage.src = "fle1.jpeg";
+            //crateImage.src = "rock.jpg"
         }
     
         function webGLStart(){
@@ -450,7 +470,9 @@
             document.onkeydown = handleKeyDown;
             document.onkeyup = handleKeyUp;
             videoElement.preload = "auto";
-            videoElement.src = "test.ogv";
+            //videoElement.src = "test.ogv";
+            videoElement.src = "baaa.ogv";
+            //videoElement.src = "http://www.youtube.com/embed/8Af372EQLck?enablejsapi=1&version=3&playerapiid=ytplayer";
             
             tick();
         }
@@ -462,6 +484,5 @@
         <video id="video" controls loop>
             Your browser doesn't appear to support the HTML5 <code>&lt;video&gt;</code> element.
         </video>
-        
     </body>
 </html>

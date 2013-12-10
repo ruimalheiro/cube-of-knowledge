@@ -4,6 +4,11 @@
     <title>Fun</title>
     <script type="text/javascript" src="glMatrix-0.9.5.min.js"></script>
     <script type="text/javascript" src="webgl-utils.js"></script>
+    <style type="text/css">
+    video {
+        display: none;
+    }
+    </style>
     
     <script id="shader-fs" type="x-shader/x-fragment">
         precision mediump float;
@@ -310,6 +315,7 @@
         var radiansSquare = 0;
         
         function draw(){
+            updateTexture();
             glContext.viewport(0, 0, glContext.viewportWidth, glContext.viewportHeight);
             glContext.clear(glContext.COLOR_BUFFER_BIT | glContext.DEPTH_BUFFER_BIT);
             
@@ -330,7 +336,8 @@
             glContext.vertexAttribPointer(shaderProgram.textureCoordAttribute, cubeVertexTextureCoordinatesBuffer.itemSize, glContext.FLOAT, false, 0, 0);
             
             glContext.activeTexture(glContext.TEXTURE0);
-            glContext.bindTexture(glContext.TEXTURE_2D, crateTextures[filter]);
+            //glContext.bindTexture(glContext.TEXTURE_2D, crateTextures[filter]);
+            glContext.bindTexture(glContext.TEXTURE_2D, cubeTexture);
             glContext.uniform1i(shaderProgram.samplerUniform, 0);
             
             glContext.bindBuffer(glContext.ELEMENT_ARRAY_BUFFER, cubeVertexIndexBuffer);
@@ -338,13 +345,29 @@
             glContext.drawElements(glContext.TRIANGLES, cubeVertexIndexBuffer.numItems, glContext.UNSIGNED_SHORT, 0);
         }
         
+        var videoElement;
+        var cubeTexture;
         
+        function updateTexture() {
+            glContext.bindTexture(glContext.TEXTURE_2D, cubeTexture);
+            glContext.pixelStorei(glContext.UNPACK_FLIP_Y_WEBGL, true);
+            glContext.texImage2D(glContext.TEXTURE_2D, 0, glContext.RGBA, glContext.RGBA,
+            glContext.UNSIGNED_BYTE, videoElement);
+        }
         
         function tick(){
             requestAnimFrame(tick);
             handleKeys();
             draw();
             animate();
+        }
+        
+        function startVideo() {
+            videoElement.play();
+            setInterval(draw, 15);
+        }
+        
+        function videoDone(){
         }
         
         var lastTime = 0;
@@ -361,7 +384,7 @@
         }
         
         function handleLoadedTexture(textures){
-            glContext.pixelStorei(glContext.UNPACK_FLIP_Y_WEBGL, true);
+            /*glContext.pixelStorei(glContext.UNPACK_FLIP_Y_WEBGL, true);
 
             glContext.bindTexture(glContext.TEXTURE_2D, textures[0]);
             glContext.texImage2D(glContext.TEXTURE_2D, 0, glContext.RGBA, glContext.RGBA, glContext.UNSIGNED_BYTE, textures[0].image);
@@ -379,7 +402,14 @@
             glContext.texParameteri(glContext.TEXTURE_2D, glContext.TEXTURE_MIN_FILTER, glContext.LINEAR_MIPMAP_NEAREST);
             glContext.generateMipmap(glContext.TEXTURE_2D);
 
-            glContext.bindTexture(glContext.TEXTURE_2D, null);
+            glContext.bindTexture(glContext.TEXTURE_2D, null);*/
+            cubeTexture = glContext.createTexture();
+            glContext.bindTexture(glContext.TEXTURE_2D, cubeTexture);
+            glContext.texParameteri(glContext.TEXTURE_2D, glContext.TEXTURE_MAG_FILTER, glContext.LINEAR);
+            glContext.texParameteri(glContext.TEXTURE_2D, glContext.TEXTURE_MIN_FILTER, glContext.LINEAR);
+            glContext.texParameteri(glContext.TEXTURE_2D, glContext.TEXTURE_WRAP_S, glContext.CLAMP_TO_EDGE);
+            glContext.texParameteri(glContext.TEXTURE_2D, glContext.TEXTURE_WRAP_T, glContext.CLAMP_TO_EDGE);
+            
         }
         
         var crateTextures = new Array();
@@ -397,21 +427,30 @@
                 handleLoadedTexture(crateTextures);
             }
             
-            crateImage.src = "crate.gif";
+            //crateImage.src = "crate.gif";
+            crateImage.src = "rock.jpg"
         }
     
         function webGLStart(){
+            videoElement = document.getElementById("video");
+            
+            
             var canvas = document.getElementById("screen");
             initGL(canvas);
             initShaders();
             initBuffers();
             initTexture();
             
+            videoElement.addEventListener("canplaythrough", startVideo, true);
+            videoElement.addEventListener("ended", videoDone, true);
+            
             glContext.clearColor(0.0, 0.0, 0.0, 1.0);
             glContext.enable(glContext.DEPTH_TEST);
             
             document.onkeydown = handleKeyDown;
             document.onkeyup = handleKeyUp;
+            videoElement.preload = "auto";
+            videoElement.src = "test.ogv";
             
             tick();
         }
@@ -419,7 +458,10 @@
     
     <body onload="webGLStart()">
         
-        <canvas id="screen" style="border: none;" width="500" height="500"></canvas>
+        <canvas id="screen" style="border: none;" width="1000" height="700"></canvas>
+        <video id="video" controls loop>
+            Your browser doesn't appear to support the HTML5 <code>&lt;video&gt;</code> element.
+        </video>
         
     </body>
 </html>

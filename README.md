@@ -17,7 +17,7 @@ The main focus of the demo will be to teach basic math and physics.
 
 ---
 #### Demo 0 available as the main page of this repository:
-    http://ruimalheiro.github.io/cube-of-knowledge/
+    [http://ruimalheiro.github.io/cube-of-knowledge/](http://ruimalheiro.github.io/cube-of-knowledge/)
     
 ---
 * NOTE: If the textures fail to load, please refresh the page once fully loaded.

@@ -16,7 +16,7 @@ The main focus of the demo will be to teach basic math and physics.
 * Multi-platform
 
 ---
-#### Demo 0 available as the main page of this repository:
+#### Demo available as the main page of this repository:
     [http://ruimalheiro.github.io/cube-of-knowledge/](http://ruimalheiro.github.io/cube-of-knowledge/)
     
 ---

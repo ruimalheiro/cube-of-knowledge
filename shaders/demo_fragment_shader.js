@@ -14,7 +14,5 @@ function get_demo_fragment_shader() {
 	glContext.shaderSource(fragmentShader, fragment_shader_source);
 	glContext.compileShader(fragmentShader);
 
-	glContext.attachShader(program, fragmentShader);
-
 	return fragmentShader;
 }

@@ -16,7 +16,5 @@ function get_demo_vertex_shader() {
 	glContext.shaderSource(vertexShader, vertex_shader_source);
 	glContext.compileShader(vertexShader);
 
-	glContext.attachShader(program, vertexShader);
-
 	return vertexShader;
 }

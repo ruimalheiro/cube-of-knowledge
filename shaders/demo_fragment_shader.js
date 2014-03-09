@@ -10,11 +10,11 @@ function get_demo_fragment_shader() {
 	    "}"
 	    ;
 
-	var fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
-	gl.shaderSource(fragmentShader, fragment_shader_source);
-	gl.compileShader(fragmentShader);
+	var fragmentShader = glContext.createShader(glContext.FRAGMENT_SHADER);
+	glContext.shaderSource(fragmentShader, fragment_shader_source);
+	glContext.compileShader(fragmentShader);
 
-	gl.attachShader(program, fragmentShader);
+	glContext.attachShader(program, fragmentShader);
 
 	return fragmentShader;
 }

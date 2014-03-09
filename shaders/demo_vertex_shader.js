@@ -12,11 +12,11 @@ function get_demo_vertex_shader() {
         "}"
         ;
         
-    var vertexShader = gl.createShader(gl.VERTEX_SHADER);
-	gl.shaderSource(vertexShader, vertex_shader_source);
-	gl.compileShader(vertexShader);
+    var vertexShader = glContext.createShader(glContext.VERTEX_SHADER);
+	glContext.shaderSource(vertexShader, vertex_shader_source);
+	glContext.compileShader(vertexShader);
 
-	gl.attachShader(program, vertexShader);
+	glContext.attachShader(program, vertexShader);
 
 	return vertexShader;
 }

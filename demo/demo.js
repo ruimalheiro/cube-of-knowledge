@@ -52,8 +52,10 @@
         var shaderProgram;
         
         function initShaders(){
-            var fragmentShader = getShader(glContext, "shader-fs");
-            var vertexShader = getShader(glContext, "shader-vs");
+            //var fragmentShader = getShader(glContext, "shader-fs");
+            var fragmentShader = get_demo_fragment_shader();
+            //var vertexShader = getShader(glContext, "shader-vs");
+            var vertexShader = get_demo_vertex_shader();
             
             shaderProgram = glContext.createProgram();
             glContext.attachShader(shaderProgram, fragmentShader);

@@ -11,7 +11,7 @@
     </style>
     
     
-    
+   <!-- 
     <script id="shader-fs" type="x-shader/x-fragment">
         precision mediump float;
         
@@ -23,8 +23,9 @@
             gl_FragColor = texture2D(uSampler, vec2(vTextureCoordinates.s, vTextureCoordinates.t));
         }
     </script>
+    -->
     
-    
+    <!--
     <script id="shader-vs" type="x-shader/x-vertex">
         attribute vec3 aVertexPosition;
         attribute vec2 aTextureCoordinates;
@@ -39,8 +40,10 @@
             vTextureCoordinates = aTextureCoordinates;
         }
     </script>
-
+    -->
     
+    <script type="text/javascript" src="shaders/demo_fragment_shader.js"></script>
+    <script type="text/javascript" src="shaders/demo_vertex_shader.js"></script>
     <script type="text/javascript" src="demo/demo.js"></script>
     
     

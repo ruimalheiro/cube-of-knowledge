@@ -1,5 +1,5 @@
-
 function get_demo_vertex_shader() {
+
 	var vertex_shader_source = 
 		"attribute vec3 aVertexPosition;" +
         "attribute vec2 aTextureCoordinates;" +

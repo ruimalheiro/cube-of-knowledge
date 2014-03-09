@@ -1,4 +1,3 @@
-
 function get_demo_fragment_shader() {
 
 	var fragment_shader_source = 

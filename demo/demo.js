@@ -17,47 +17,44 @@
 
 
 
-
+function getShaderStr(path,shaderType){      
+  var XHR = new XMLHttpRequest();
+  XHR.open("GET", path, false);
+   
+  if(XHR.overrideMimeType){
+    XHR.overrideMimeType("text/plain");
+  }
+   
+  try{
+    XHR.send(null);
+  }catch(e){
+    this.println('Error reading file "' + path + '"');
+  }
+          var str=XHR.responseText;
+          var shadert;
+              if(shaderType == "fragment"){
+                shadert = glContext.createShader(glContext.FRAGMENT_SHADER);
+            } else if(shaderType == "vertex"){
+                shadert = glContext.createShader(glContext.VERTEX_SHADER);
+            } else {
+                return null;
+            }
+            
+            glContext.shaderSource(shadert, str);
+            glContext.compileShader(shadert);
+            
+            if(!glContext.getShaderParameter(shadert, glContext.COMPILE_STATUS)){
+                alert(glContext.getShaderInfoLog(shadert));
+                return null;
+            }
+  return shadert;
+};
 var shaderProgram;
 
 
 
     //new shader loader
-    function getShader1(gl, id) {
-        var shaderScript = document.getElementById(id);
-        if (!shaderScript) {
-            return null;
-        }
 
-        var str = "";
-        var k = shaderScript.firstChild;
-   /*     while (k) {
-            if (k.nodeType == 3) {
-                str += k.textContent;
-            }
-            k = k.nextSibling;
-        }
-*/
-        var shader;
-        if (shaderScript.type == "x-shader/x-fragment") {
-            shader = glContext.createShader(glContext.FRAGMENT_SHADER);
-        } else if (shaderScript.type == "x-shader/x-vertex") {
-            shader = glContext.createShader(glContext.VERTEX_SHADER);
-        } else {
-            return null;
-        }
-
-        str=getSourceSynch(shaderScript.src);
-        glContext.shaderSource(shader, str);
-        glContext.compileShader(shader);
-
-        if (!glContext.getShaderParameter(shader, glContext.COMPILE_STATUS)) {
-            alert(glContext.getShaderInfoLog(shader));
-            return null;
-        }
-
-        return shader;
-    }
 
 
 
@@ -65,10 +62,9 @@ var shaderProgram;
     function LoadShader() {
 
         console.log("Compiling fragment shader.");
-        var fs = getShader1(glContext, "shader-fs");
+        var vs = getShaderStr("../shaders/fragment_shader.frag","fragment");
         console.log("Compiling vertex shader.");
-        var vs = getShader1(glContext, "shader-vs");
-
+        var fs = getShaderStr("../shaders/vertex_shader.vert","vertex");
         console.log("Linking program");
         shaderProgram = glContext.createProgram();
         glContext.attachShader(shaderProgram, vs);
@@ -116,6 +112,7 @@ var shaderProgram;
 
 
         //old shader functions
+        /*
         function getShader(glContext, id){
             var shaderScript = document.getElementById(id);
             if(!shaderScript){
@@ -182,7 +179,7 @@ var shaderProgram;
         }
         
         //end old shader functions
-
+*/
 
         //var mesh = new obj_loader.Mesh( "School_Chair.obj" );
         var cubeVertexPositionBuffer;
@@ -800,14 +797,14 @@ var shaderProgram;
 
             //crateImage.src = "crate.gif";
             
-            crateImage.src = "images/fle1.jpeg";
+            crateImage.src = "../images/fle1.jpeg";
             //crateImage.src = "rock.jpg"
 
 
 
-            image.src = "images/wood3.jpg";
-            image2.src = "images/rock.jpg";
-            //image2.src = "kawallrr.jpg";
+            image.src = "../images/wood3.jpg";
+            image2.src = "../images/rock.jpg";
+           // image2.src = "kawallrr.jpg";
             image3.src = "images/kawallrr.jpg";
             
         }
@@ -821,8 +818,8 @@ var shaderProgram;
             canvas.height = document.height/2;
             */
             initGL(canvas);
-           //LoadShader();
-            initShaders();
+           LoadShader();
+           // initShaders();
             initBuffers();
             initTexture();
             

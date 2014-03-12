@@ -2,7 +2,7 @@
     
         function initGL(canvas){
             try{
-                glContext = canvas.getContext("experimental-webgl");
+                glContext =canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
                 glContext.viewportWidth = canvas.width;
                 glContext.viewportHeight = canvas.height;
             } catch(e) {
@@ -14,6 +14,105 @@
             }
         }
         
+
+
+
+function getShaderStr(path,shaderType){      
+  var XHR = new XMLHttpRequest();
+  XHR.open("GET", path, false);
+   
+  if(XHR.overrideMimeType){
+    XHR.overrideMimeType("text/plain");
+  }
+   
+  try{
+    XHR.send(null);
+  }catch(e){
+    this.println('Error reading file "' + path + '"');
+  }
+          var str=XHR.responseText;
+          var shadert;
+              if(shaderType == "fragment"){
+                shadert = glContext.createShader(glContext.FRAGMENT_SHADER);
+            } else if(shaderType == "vertex"){
+                shadert = glContext.createShader(glContext.VERTEX_SHADER);
+            } else {
+                return null;
+            }
+            
+            glContext.shaderSource(shadert, str);
+            glContext.compileShader(shadert);
+            
+            if(!glContext.getShaderParameter(shadert, glContext.COMPILE_STATUS)){
+                alert(glContext.getShaderInfoLog(shadert));
+                return null;
+            }
+  return shadert;
+};
+var shaderProgram;
+
+
+
+    //new shader loader
+
+
+
+
+
+    function LoadShader() {
+
+        console.log("Compiling fragment shader.");
+        var vs = getShaderStr("../shaders/fragment_shader.frag","fragment");
+        console.log("Compiling vertex shader.");
+        var fs = getShaderStr("../shaders/vertex_shader.vert","vertex");
+        console.log("Linking program");
+        shaderProgram = glContext.createProgram();
+        glContext.attachShader(shaderProgram, vs);
+        glContext.attachShader(shaderProgram, fs);
+        glContext.linkProgram(shaderProgram);
+
+        if (!glContext.getProgramParameter(shaderProgram, glContext.LINK_STATUS)) 
+        {
+            alert("Could not initialise shaders");
+        }
+
+       
+         glContext.useProgram(shaderProgram);
+
+
+            glContext.useProgram(shaderProgram);
+            
+            shaderProgram.vertexPositionAttribute = glContext.getAttribLocation(shaderProgram, "aVertexPosition");
+            glContext.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
+            
+            shaderProgram.textureCoordAttribute = glContext.getAttribLocation(shaderProgram, "aTextureCoordinates");
+            glContext.enableVertexAttribArray(shaderProgram.textureCoordAttribute);
+            
+            shaderProgram.pMatrixUniform = glContext.getUniformLocation(shaderProgram, "uPMatrix");
+            shaderProgram.mvMatrixUniform = glContext.getUniformLocation(shaderProgram, "uMVMatrix");
+            shaderProgram.samplerUniform = glContext.getUniformLocation(shaderProgram, "uSampler");
+
+            console.log(
+            "Attributes: " 
+            + "\nvertexPositionAttribute="+ shaderProgram.vertexPositionAttribute
+            + "\nvertexColorAttribute="+ shaderProgram.textureCoordAttribute 
+            + "\nUniforms: "
+            + "\npMatrixUniform="+ shaderProgram.pMatrixUniform 
+            + "\nmvMatrixUniform="+ shaderProgram.mvMatrixUniform 
+            + "\ntimeUniform="+ shaderProgram.samplerUniform 
+            + "\n"
+              );
+       
+
+      
+    }
+
+//end new shader loader
+
+
+
+        //old shader functions
+        /*
         function getShader(glContext, id){
             var shaderScript = document.getElementById(id);
             if(!shaderScript){
@@ -49,7 +148,7 @@
             return shader;
         }
         
-        var shaderProgram;
+        
         
         function initShaders(){
             //var fragmentShader = getShader(glContext, "shader-fs");
@@ -79,6 +178,9 @@
             shaderProgram.samplerUniform = glContext.getUniformLocation(shaderProgram, "uSampler");
         }
         
+        //end old shader functions
+*/
+
         //var mesh = new obj_loader.Mesh( "School_Chair.obj" );
         var cubeVertexPositionBuffer;
         var cubeVertexTextureCoordinatesBuffer;
@@ -556,6 +658,11 @@
         var cubeTexture;
         
         function updateTexture() {
+
+
+        
+
+
             glContext.bindTexture(glContext.TEXTURE_2D, cubeTexture);
             glContext.pixelStorei(glContext.UNPACK_FLIP_Y_WEBGL, true);
             glContext.texImage2D(glContext.TEXTURE_2D, 0, glContext.RGBA, glContext.RGBA,
@@ -686,13 +793,18 @@
                 handleLoadedTexture(crateTextures);
             }
             
+   
+
             //crateImage.src = "crate.gif";
-            crateImage.src = "images/fle1.jpeg";
-            //crateImage.src = "rock.jpg"
             
-            image.src = "images/wood3.jpg";
-            image2.src = "images/rock.jpg";
-            //image2.src = "kawallrr.jpg";
+            crateImage.src = "../images/fle1.jpeg";
+            //crateImage.src = "rock.jpg"
+
+
+
+            image.src = "../images/wood3.jpg";
+            image2.src = "../images/rock.jpg";
+           // image2.src = "kawallrr.jpg";
             image3.src = "images/kawallrr.jpg";
             
         }
@@ -702,8 +814,12 @@
             
             
             var canvas = document.getElementById("screen");
+           /* canvas.width = document.width/2;
+            canvas.height = document.height/2;
+            */
             initGL(canvas);
-            initShaders();
+           LoadShader();
+           // initShaders();
             initBuffers();
             initTexture();
             
@@ -715,9 +831,12 @@
             
             document.onkeydown = handleKeyDown;
             document.onkeyup = handleKeyUp;
+
             videoElement.preload = "auto";
-            //videoElement.src = "videos/test.ogv";
+           
+           // videoElement.src = "videos/test.ogv";
             videoElement.src = "videos/baaa.ogv";
+
             //videoElement.src = "http://www.youtube.com/embed/8Af372EQLck?enablejsapi=1&version=3&playerapiid=ytplayer";
             
             tick();
